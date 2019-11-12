@@ -1,0 +1,13 @@
+info:
+  app:
+    name: "@project.name@"
+    description: "@project.description@"
+    version: "@project.version@"
+management:
+  info:
+    git:
+      mode: full
+app:
+  workerId: 0
+server:
+  port: 9090
