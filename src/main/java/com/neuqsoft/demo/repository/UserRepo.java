@@ -4,6 +4,14 @@ import com.neuqsoft.demo.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserRepo extends JpaRepository<UserEntity,String> {
+
+    UserEntity findByMobile(String mobile);
+
+    List<UserEntity> findAll();
+
+    UserEntity findAllById(String id);
 }

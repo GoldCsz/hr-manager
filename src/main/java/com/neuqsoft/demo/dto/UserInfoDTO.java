@@ -1,29 +1,18 @@
-package com.neuqsoft.demo.entity;
+package com.neuqsoft.demo.dto;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 /**
  * @Author: chensz
- * @CreateTime: 2019-11-18 13:28
+ * @CreateTime: 2019-11-19 10:07
  * @Description:
  */
 @Data
-@Entity
-@ApiModel(value = "UserEntity",description = "员工信息表")
-@Table(name = "SYS_USER")
-public class UserEntity {
-
-    @Id
-    private String id;
+public class UserInfoDTO {
 
     @ApiModelProperty("员工号")
-    private String userNum;
+    private String number;
 
     private String name;
 
@@ -45,8 +34,4 @@ public class UserEntity {
 
     private String mail;
 
-    private String password;
-
-    @ApiModelProperty("角色")
-    private String role;
 }
