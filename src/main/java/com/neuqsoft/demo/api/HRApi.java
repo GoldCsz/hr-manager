@@ -5,15 +5,17 @@ import com.neuqsoft.demo.dto.UserInfoDTO;
 import com.neuqsoft.demo.entity.UserEntity;
 import com.neuqsoft.demo.service.HRService;
 import io.swagger.annotations.ApiOperation;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * @Author: chensz
@@ -29,8 +31,12 @@ public class HRApi {
 
     @ApiOperation("查看员工信息")
     @GetMapping("/staff")
-    public List<UserEntity> getUserInfo() {
-        return hrService.getUserInfo();
+    public Page<UserEntity> getUserInfo(@RequestParam(required = false) String userNum,
+                                        @RequestParam(required = false) String name,
+                                        @RequestParam(required = false) String dep,
+                                        @RequestParam(required = false, defaultValue = "0") int pageNo,
+                                        @RequestParam(required = false, defaultValue = "10") int pageSize) {
+        return hrService.getStaff(userNum, name, dep, pageNo, pageSize);
     }
 
     @ApiOperation("添加员工信息")
@@ -53,7 +59,29 @@ public class HRApi {
 
     @ApiOperation("批量导入excel")
     @PostMapping("/staff/excel")
-    public GlobalMessage addUserInfoList(@RequestParam MultipartFile mf) throws ParserConfigurationException, OpenXML4JException, SAXException, IOException {
+    public GlobalMessage addUserInfoList(@RequestParam MultipartFile mf) {
         return hrService.addUserInfoList(mf);
+    }
+
+    @ApiOperation(value = "批量导出excel")
+    @GetMapping(value = "staff/excel")
+    public void Excel(HttpServletResponse response) {
+        XSSFWorkbook wb = hrService.showUserInfo();
+        String fileName = "员工基本信息表.xlsx";
+        OutputStream outputStream = null;
+        try {
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            //设置ContentType请求信息格式
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+            outputStream = response.getOutputStream();
+            wb.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
